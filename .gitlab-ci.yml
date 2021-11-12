@@ -21,7 +21,7 @@ before_script:
 
 init:
   image: docker:latest
-  stage: build
+  stage: init
   services:
     - docker:dind
   script:
@@ -35,7 +35,7 @@ build:
     - waypoint build
 deploy:
   image: docker:latest
-  stage: build
+  stage: deploy
   services:
     - docker:dind
   script:
