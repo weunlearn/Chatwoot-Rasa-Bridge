@@ -10,14 +10,15 @@ cache:
 variables:
   WAYPOINT_VERSION: '0.6.2'
   WAYPOINT_SERVER_ADDR: 'ad08ae234a34d44148a46054533f0285-77712032.ap-south-1.elb.amazonaws.com'
-  WAYPOINT_SERVER_TOKEN: 'rHhYzVXQBcJG8Utyu1rkJhAyByXDEGV2stST1U96ayiftyDhUzaFf6UxZdAWFHEKsxF2MZYZG8G4nJ5DhnDH77cPqpprkHXBFTQJjsodkJbFbYb8oC9HC9UJzvAHi9onE7LgkCnxR27ccihcJi6KZZHdPDyPXnzaC'
   WAYPOINT_SERVER_TLS: '0'
   WAYPOINT_SERVER_TLS_SKIP_VERIFY: '1'
+  WAYPOINT_SERVER_REQUIRE_AUTH: '1'
 
 before_script:
   - wget -q -O /tmp/waypoint.zip https://releases.hashicorp.com/waypoint/${WAYPOINT_VERSION}/waypoint_${WAYPOINT_VERSION}_linux_amd64.zip
   - unzip -d /usr/local/bin /tmp/waypoint.zip
   - rm -rf /tmp/waypoint*
+  #- waypoint context create wulu -set-default -server-addr=${WAYPOINT_SERVER_TOKEN} -server-auth-token=${WAYPOINT_SERVER_TOKEN}
 
 init:
   image: docker:latest
