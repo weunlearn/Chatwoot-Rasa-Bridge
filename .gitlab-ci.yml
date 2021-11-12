@@ -18,15 +18,16 @@ before_script:
   - wget -q -O /tmp/waypoint.zip https://releases.hashicorp.com/waypoint/${WAYPOINT_VERSION}/waypoint_${WAYPOINT_VERSION}_linux_amd64.zip
   - unzip -d /usr/local/bin /tmp/waypoint.zip
   - rm -rf /tmp/waypoint*
-  - waypoint context create -server-addr=${WAYPOINT_SERVER_ADDR} -server-auth-token=${WAYPOINT_SERVER_TOKEN} -server-tls-skip-verify -server-require-auth -set-default wulu
-  - waypoint context verify wulu
+
 init:
   image: docker:latest
   stage: init
   services:
     - docker:dind
   script:
-    - waypoint init || waypoint init
+    - waypoint context create -server-addr=${WAYPOINT_SERVER_ADDR} -server-auth-token=${WAYPOINT_SERVER_TOKEN} -server-tls-skip-verify -server-require-auth -set-default wulu
+    - waypoint context verify wulu
+    - waypoint init
 build:
   image: docker:latest
   stage: build
