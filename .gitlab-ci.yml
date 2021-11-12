@@ -26,9 +26,7 @@ init:
   services:
     - docker:dind
   script:
-    - waypoint init
-    - sleep 5
-    - waypoint init
+    - waypoint init || waypoint init
 build:
   image: docker:latest
   stage: build
