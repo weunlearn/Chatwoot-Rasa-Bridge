@@ -17,6 +17,7 @@ before_script:
   - wget -q -O /tmp/waypoint.zip https://releases.hashicorp.com/waypoint/${WAYPOINT_VERSION}/waypoint_${WAYPOINT_VERSION}_linux_amd64.zip
   - unzip -d /usr/local/bin /tmp/waypoint.zip
   - rm -rf /tmp/waypoint*
+  - echo "$WAYPOINT_SERVER_TOKEN"
 
 init:
   image: docker:latest
