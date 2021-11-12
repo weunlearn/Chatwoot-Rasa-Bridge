@@ -9,8 +9,7 @@ cache:
     - /usr/local/bin
 variables:
   WAYPOINT_VERSION: '0.6.2'
-  WAYPOINT_SERVER_ADDR: 'https://ad08ae234a34d44148a46054533f0285-77712032.ap-south-1.elb.amazonaws.com'
-  WAYPOINT_SERVER_TOKEN: $WAYPOINT_SERVER_TOKEN
+  WAYPOINT_SERVER_ADDR: 'http://ad08ae234a34d44148a46054533f0285-77712032.ap-south-1.elb.amazonaws.com'
   WAYPOINT_SERVER_TLS: '0'
   WAYPOINT_SERVER_TLS_SKIP_VERIFY: '1'
 
