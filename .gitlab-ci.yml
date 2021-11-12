@@ -19,7 +19,7 @@ before_script:
   - unzip -d /usr/local/bin /tmp/waypoint.zip
   - rm -rf /tmp/waypoint*
   - waypoint context create -server-addr=${WAYPOINT_SERVER_ADDR} -server-tls-skip-verify -server-auth-token=${WAYPOINT_SERVER_TOKEN} -server-require-auth=true -set-default wulu
-  - waypoint context list
+  - waypoint context verify wulu
 init:
   image: docker:latest
   stage: init
