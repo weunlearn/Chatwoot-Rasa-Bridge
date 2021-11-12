@@ -4,9 +4,7 @@ stages:
   - build
   - deploy
   - release
-cache:
-  paths:
-    - /usr/local/bin
+
 variables:
   WAYPOINT_VERSION: '0.6.2'
   WAYPOINT_SERVER_ADDR: 'ad08ae234a34d44148a46054533f0285-77712032.ap-south-1.elb.amazonaws.com:9701'
