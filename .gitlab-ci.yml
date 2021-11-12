@@ -1,0 +1,43 @@
+stages:
+  # - test
+  - init
+  - build
+  - deploy
+  - release
+cache:
+  paths:
+    - /usr/local/bin
+variables:
+  WAYPOINT_VERSION: '0.6.2'
+  WAYPOINT_SERVER_ADDR: 'https://ad08ae234a34d44148a46054533f0285-77712032.ap-south-1.elb.amazonaws.com'
+  WAYPOINT_SERVER_TOKEN: $WAYPOINT_SERVER_TOKEN
+  WAYPOINT_SERVER_TLS: '1'
+  WAYPOINT_SERVER_TLS_SKIP_VERIFY: '1'
+
+before_script:
+  - wget -q -O /tmp/waypoint.zip https://releases.hashicorp.com/waypoint/${WAYPOINT_VERSION}/waypoint_${WAYPOINT_VERSION}_linux_amd64.zip
+  - unzip -d /usr/local/bin /tmp/waypoint.zip
+  - rm -rf /tmp/waypoint*
+
+init:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - waypoint init
+build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - waypoint build
+deploy:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - waypoint build
+    - waypoint deploy

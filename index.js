@@ -6,24 +6,29 @@ AWS.config.update({region: 'ap-south-1'});
 
 let rasa_url = 'https://rasawulu.ddns.net';
 let chatwoot_url = 'https://weunlearn.hopto.org';
-let chatwoot_bot_token = 'tLXXAhti8tWK46NW8TfFVSwj';
+let chatwoot_bot_token = 'RhmauoS5Yd5n1iNjxEFTKURV';
 exports.handler = async (event) => {
-   //console.log(util.inspect(req.body, false, null, true /* enable colors */))
+   console.log(util.inspect(event.body, false, null, true /* enable colors */))
    let data = JSON.parse(event.body);
-   console.log(data);
    let message_type = data.message_type;
    let message = data.content;
+   let button = data.content_attributes.hasOwnProperty('submitted_values');
+   console.log(data.content_attributes.hasOwnProperty('submitted_values'));
+   if (button){
+      message=data.content_attributes.submitted_values[0].value;
+      console.log(message);
+   }
    let conversation = data.conversation.id;
-   let contact = data.sender.id;
+   let contact = data.conversation.meta.sender.phone_number.replace('+', '');
    let inbox = data.conversation.status;
    let custom_attributes = data.conversation.meta.sender.custom_attributes;
    // TODO : Check for submitted values and assign to message field
-   console.log("Attrs: ", data.content_attributes.submitted_values);
-   if (message_type == "incoming" && inbox == "pending"){
-
+   if ((message_type == "incoming" && inbox == "pending") || (button)){
+      console.log("sending to bot...", message);
       let bot_response = await send_to_bot(contact, message);
       console.log(bot_response);
       for(let i=0;i<bot_response.length;i++){
+         console.log("sending to chatwoot...")
          console.log("Body:", bot_response[i]);
          let resp = await send_to_chatwoot(conversation, bot_response[i], custom_attributes);
          console.log(resp);
@@ -59,16 +64,19 @@ async function send_to_chatwoot(conversation, message, custom_attributes){
    let content;
    let content_attributes = {};
    let content_type = "text";
-   if (custom_attributes.language!=null){
+   console.log(custom_attributes.hasOwnProperty('language'));
+   console.log(custom_attributes.language != 'en');
+   if ((custom_attributes.hasOwnProperty('language')) && custom_attributes.language != 'en'){
       var lang_code = custom_attributes.language;
-      content = (await translator(lang_code, message.text)).TranslatedText;
+      content = await translator(lang_code, message.text);
+      console.log(content);
       let options = [];
       if (message.buttons!=null) {
          content_type = "input_select";
          for (var i = 0; i < message.buttons.length; i++) {
             options.push({
                'title': await translator(lang_code, message.buttons[i].title),
-               'value': message.buttons[i].payload
+               'value': await translator(lang_code, message.buttons[i].payload)
             })
          }
       }
@@ -91,12 +99,13 @@ async function send_to_chatwoot(conversation, message, custom_attributes){
    }
 
 
-   console.log(content_attributes);
+   //console.log(content_attributes);
    let payload = JSON.stringify({
       "content": content,
       "content_attributes": content_attributes,
       "content_type": content_type
    });
+   console.log(payload);
    console.log("CONV:", conversation);
    const config = {
       method: 'post',
@@ -116,10 +125,14 @@ async function send_to_chatwoot(conversation, message, custom_attributes){
 }
 
 async function translator(target, text){
+   console.log("Translating...:", text)
    let params = {
       SourceLanguageCode: 'en', /* required */
       TargetLanguageCode: target, /* required */
       Text: text, /* required */
+      TerminologyNames: [
+         "wulu"
+      ]
       //TerminologyNames: [
       //   'STRING_VALUE',
       /* more items */
@@ -128,6 +141,7 @@ async function translator(target, text){
    const translate = new AWS.Translate();
    return await translate.translateText(params).promise().then(
        function(data) {
+          console.log(data);
           return data.TranslatedText;
        },
        function(error) {
