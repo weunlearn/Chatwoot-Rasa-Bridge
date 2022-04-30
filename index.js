@@ -4,9 +4,10 @@ const AWS = require("aws-sdk");
 AWS.config.update({region: 'ap-south-1'});
 
 
-let rasa_url = 'https://rasawulu.ddns.net';
-let chatwoot_url = 'https://weunlearn.hopto.org';
-let chatwoot_bot_token = 'RhmauoS5Yd5n1iNjxEFTKURV';
+let rasa_url = '';
+let chatwoot_url = '';
+let chatwoot_bot_token = '';
+let aws_terminology = '';
 exports.handler = async (event) => {
    console.log(util.inspect(event.body, false, null, true /* enable colors */))
    let data = JSON.parse(event.body);
@@ -131,7 +132,7 @@ async function translator(target, text){
       TargetLanguageCode: target, /* required */
       Text: text, /* required */
       TerminologyNames: [
-         "wulu"
+         aws_terminology
       ]
       //TerminologyNames: [
       //   'STRING_VALUE',
